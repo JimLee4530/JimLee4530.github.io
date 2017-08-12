@@ -4,7 +4,6 @@ title: About
 permalink: /about/
 ---
 
-# About
 
 My name is Jim Lee(Li Jing), and this is my personal blog.
 
