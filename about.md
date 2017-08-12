@@ -4,9 +4,7 @@ title: About
 permalink: /about/
 ---
 
-# Jim Lee
-
-## About
+# About
 
 My name is Jim Lee(Li Jing), and this is my personal blog.
 
@@ -14,6 +12,6 @@ Area of my interest is  Machine Learning and Deep Learning (mostly, somehow appl
 
 I am a master currently studying at [HDU CAMA-LAB](http://camalab.hdu.edu.cn/) and majoring in Computer Vision.
 
-## Contact me
+# Contact me
 
 [jeyeml33@gmail.com](jeyeml33@gmail.com)
