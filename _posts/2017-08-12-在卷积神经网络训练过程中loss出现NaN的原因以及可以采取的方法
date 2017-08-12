@@ -1,0 +1,91 @@
+## 1.梯度爆炸
+-----
+**原因**：在学习过程中，梯度变得非常大，使得学习的过程偏离了正常的轨迹。
+
+
+**症状**：观察输出日志(runtime log)中每次迭代的loss值，你会发现loss随着迭代有明显的增长，最后因为loss值太大以致于不能用浮点数去表示，所以变成了*NaN*。
+
+
+**可采取的方法**：1.降低学习率，比如*solver.prototxt*中*base_lr*，降低一个数量级（至少）。如果在你的模型中有多个loss层，就不能降低基础的学习率*base_lr*，而是需要检查日志，找到产生梯度爆炸的层，然后降低*train_val.prototxt*中该层的*loss_weight*。
+
+
+## 2.错误的学习率策略及参数
+-------
+**原因**：在学习过程中，caffe不能得出一个正确的学习率，相反会得到*inf*或者*nan*的值。这些错误的学习率乘上所有的梯度使得所有参数变成无效的值。
+
+
+**症状**：观察输出日志(runtime log)，你应该可以看到学习率变成*NaN*，例如：
+```
+... sgd_solver.cpp:106] Iteration 0, lr = -nan
+```
+
+
+**可采取的方法**：修改*solver.prototxt*文件中所有能影响学习率的参数。比如，如果你设置的学习率策略是 *lr_policy: "poly"* ，而你又忘了设置最大迭代次数*max_iter*，那么最后你会得到*lr=NaN*...
+
+
+关于caffe学习率及其策略的内容，可以在github的*/caffe-master/src/caffe/proto/caffe.proto* 文件中看到 ([传送门](https://github.com/BVLC/caffe/blob/master/src/caffe/proto/caffe.proto#L157-L172))。
+下面是源文件的注释部分的描述：
+```
+// The learning rate decay policy. The currently implemented learning rate
+// policies are as follows:
+//    - fixed: always return base_lr.
+//    - step: return base_lr * gamma ^ (floor(iter / step))
+//    - exp: return base_lr * gamma ^ iter
+//    - inv: return base_lr * (1 + gamma * iter) ^ (- power)
+//    - multistep: similar to step but it allows non uniform steps defined by
+//      stepvalue
+//    - poly: the effective learning rate follows a polynomial decay, to be
+//      zero by the max_iter. return base_lr (1 - iter/max_iter) ^ (power)
+//    - sigmoid: the effective learning rate follows a sigmod decay
+//      return base_lr ( 1/(1 + exp(-gamma * (iter - stepsize))))
+//
+// where base_lr, max_iter, gamma, step, stepvalue and power are defined
+// in the solver parameter protocol buffer, and iter is the current iteration.
+```
+
+
+## 3.错误的损失函数
+-----------
+**原因**：有时，在损失层计算损失值时会出现*NaN*的情况。比如，向*InfogainLoss*层没有归一化输入值，使用自定义的损失层等。
+
+
+**症状**：观察输出日志(runtime log)的时候，你可能不会发现任何异常：loss逐渐下降，然后突然出现*NaN*。
+
+
+**可采取的方法**：尝试重现该错误，打印损失层的值并调试。
+
+
+举个栗子：有一回，我根据批量数据中标签出现的频率去归一化惩罚值并以此计算loss。如果有个label并没有在批量数据中出现，频率为0，结果loss出现了*NaN*的情况。在这种情况下，需要用足够大的batch来避免这个错误。
+
+
+## 4.错误的输入
+--------
+**原因**：你的输入中存在*NaN*！
+
+
+**症状**：一旦学习过程中碰到这种错误的输入，输出就会变成*NaN*。观察输出日志(runtime log)的时候，你可能也不会发现任何异常：loss逐渐下降，然后突然出现*NaN*。
+
+
+**可采取的方法**：重建你的输入数据集(lmdb/leveldn/hdf5...)，确保你的训练集/验证集中没有脏数据（错误的图片文件）。调试时，使用一个简单的网络去读取输入，如果有一个输入有错误，这个网络的loss也会出现*NaN*。
+
+
+## 5.Pooling层的步长大于核的尺寸
+---------
+由于一些原因，步长*stride*>核尺寸*kernel_size*的pooling层会出现*NaN*。比如：
+```
+layer {
+  name: "faulty_pooling"
+  type: "Pooling"
+  bottom: "x"
+  top: "y"
+  pooling_param {
+    pool: AVE
+    stride: 5
+    kernel: 3
+  }
+}
+```
+结果y会出现*NaN*。
+
+
+原文链接：https://stackoverflow.com/questions/33962226/common-causes-of-NaNs-during-training
