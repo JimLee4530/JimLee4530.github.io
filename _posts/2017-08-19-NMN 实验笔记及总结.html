@@ -219,7 +219,7 @@ code.language-yaml {
 <h1 class="mume-header" id="neural-module-network">Neural Module Network</h1>
 
 <p>该论文中提出的NMN的一大特点就是其结构是它并不是像传统的神经网络模型一样是一个整体，它是由多个模块化网络组合而成。根据VQA数据集中每个questions定制一个网络模型。也就是说NMN模型的网络是根据question的语言结构动态生成的。</p>
-<p><img src="image/NMNF1.png" alt="image NMN F1"></p>
+<p><img src="../image/2017-08-19/NMNF1.png" alt="image NMN F1"></p>
 <p>如图，作者首先使用自然语言解析器解析每个问题，然后以此分析出回答问题所需要的基础组成单元（attention， classification 等）以及组成单元之间的联系。比如上图，我们首先产生一个对狗的attention，将其输出到位置描述器。根据底层结构，模块间传递的这些消息可能是原始图像特征、attention或分类决策；每个模块从特定输入映射到输出类型。作者在图中用不用的颜色表示不同的模块，用绿色表示attetion-producing模块(like dog)，用蓝色表示标签模块(like where)。需要注意的是，所有NMN中的模块都是独立的，可组合的，这使得NMN可以对每个问题实例组合成不用的网络，即使测试中出现的结构，在训练过程中并不曾出现过，NMN也能work。除NMN以外，作者还添加了LSTM模块去读取question，用来学习常识性的知识。</p>
 <p>每个训练的数据项被想象成一个三元组(w,x,y):</p>
 <ul>
@@ -233,23 +233,23 @@ code.language-yaml {
 <p>作者的目标是确定一个模块集合，这些模块可以组装成我们任务所谓的所有配置。</p>
 <h3 class="mume-header" id="attention">Attention</h3>
 
-<p><img src="image/Find.png" alt="attend"></p>
+<p><img src="../image/2017-08-19/Find.png" alt="attend"></p>
 <p>attend模块将输入图像的每一个位置与与权重（根据C的不同而不同）提供一个热力图或一个非标准的注意力图。比如，attend[dog]模块输出的矩阵，包含狗的区域值较大，而其他区域值较小。</p>
 <h3 class="mume-header" id="re-attention">Re-attention</h3>
 
-<p><img src="image/re-attend.png" alt="Re-attention"></p>
+<p><img src="../image/2017-08-19/re-attend.png" alt="Re-attention"></p>
 <p>Re-attention模块本质上由多元感知器及Relu实现，执行一个全连接使得将注意力映射到其他地方。re-attend[above]就是讲attention和最佳的软激活区域向上移。</p>
 <h3 class="mume-header" id="combination">Combination</h3>
 
-<p><img src="image/combine.png" alt="Combine"></p>
+<p><img src="../image/2017-08-19/combine.png" alt="Combine"></p>
 <p>combine[c]模块将两个attention结合成一个attention。比如，combine[and]只激活两个输入中都激活的区域，而except则是激活第一个输入，将第二个输入失活。</p>
 <h3 class="mume-header" id="classification">Classification</h3>
 
-<p><img src="image/classification.png" alt="Desrible"></p>
+<p><img src="../image/2017-08-19/classification.png" alt="Desrible"></p>
 <p>Classification模块classify[c]将attention和image映射到labels的概率分布。它首先计算由注意力加权的平均图像特征，然后通过一个完全连通层传递这个平均特征向量。</p>
 <h3 class="mume-header" id="measurement">Measurement</h3>
 
-<p><img src="image/measure.png" alt="Measure"></p>
+<p><img src="../image/2017-08-19/measure.png" alt="Measure"></p>
 <p>Measure模块Measure[c]以一个attention作为输入，映射到label的概率分布。由于传递的attention是非标准的，所以measure模块适合用于评价检测目标是否存在。</p>
 <h2 class="mume-header" id="&#x7F51;&#x7EDC;&#x7ED3;&#x6784;&#x7684;&#x751F;&#x6210;">网络结构的生成</h2>
 
@@ -264,7 +264,7 @@ code.language-yaml {
 <h3 class="mume-header" id="layout">Layout</h3>
 
 <p>当符号表示形式给出后，所有的叶子节点用attend模块，中间节点用re-attend或combine模块，根节点用cclassify或measure模块。</p>
-<p><img src="image/F2.png" alt="F2"></p>
+<p><img src="../image/2017-08-19/F2.png" alt="F2"></p>
 <h2 class="mume-header" id="answering-natural-language-questions">Answering natural language questions</h2>
 
 <p>正如图一所示，我们最后的模型的输出结合了NMN和一个简单的LSTM的问题编码器的输出。这么做的原因有二：</p>
@@ -315,7 +315,7 @@ code.language-yaml {
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo fence="false">[</mo><mi>e</mi><mi>x</mi><mi>i</mi><mi>s</mi><mi>t</mi><mi>s</mi><mo>(</mo><mi>h</mi><mo>)</mo><mo fence="false">]</mo><mo>=</mo><mi>s</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo>(</mo><mo>(</mo><msub><mi>max</mi><mi>k</mi></msub><msub><mi>h</mi><mi>k</mi></msub><mo>)</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\big[exists(h)\big] = softmax((\max_k h_k)a + b)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.85em;"></span><span class="strut bottom" style="height:1.6021079999999999em;vertical-align:-0.752108em;"></span><span class="base"><span class="mord"><span class="delimsizing size1">[</span></span><span class="mord mathit">e</span><span class="mord mathit">x</span><span class="mord mathit">i</span><span class="mord mathit">s</span><span class="mord mathit">t</span><span class="mord mathit">s</span><span class="mopen">(</span><span class="mord mathit">h</span><span class="mclose">)</span><span class="mord"><span class="delimsizing size1">]</span></span><span class="mrel">=</span><span class="mord mathit">s</span><span class="mord mathit">o</span><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathit">t</span><span class="mord mathit">m</span><span class="mord mathit">a</span><span class="mord mathit">x</span><span class="mopen">(</span><span class="mopen">(</span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.43055999999999994em;"><span style="top:-2.047892em;margin-left:0em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight" style="margin-right:0.03148em;">k</span></span></span><span style="top:-2.7em;"><span class="pstrut" style="height:2.7em;"></span><span><span class="mop">max</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.752108em;"></span></span></span></span><span class="mord"><span class="mord mathit">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight" style="margin-right:0.03148em;">k</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"></span></span></span></span></span><span class="mclose">)</span><span class="mord mathit">a</span><span class="mbin">+</span><span class="mord mathit">b</span><span class="mclose">)</span></span></span></span></span></p><h2 class="mume-header" id="&#x5E03;&#x5C40;&#x9009;&#x62E9;">布局选择</h2>
 
 <p>作者用固定的句法解析器将问题解析成多个候选布局，对布局的分布便为<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo>(</mo><mi>z</mi><mi mathvariant="normal">∣</mi><mi>x</mi><mo separator="true">;</mo><msub><mi>θ</mi><mi>l</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">p(z|x;\theta_l)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base"><span class="mord mathit">p</span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.04398em;">z</span><span class="mord mathrm">∣</span><span class="mord mathit">x</span><span class="mpunct">;</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">θ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"></span></span></span></span></span><span class="mclose">)</span></span></span></span>。如下所示：</p>
-<p><img src="image/F3.png" alt="F3"></p>
+<p><img src="../image/2017-08-19/F3.png" alt="F3"></p>
 <p>处理步骤：</p>
 <ol>
 <li>将输入的局则解析成相互依赖的树型结构</li>
