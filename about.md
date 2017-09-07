@@ -5,7 +5,7 @@ permalink: /about/
 ---
 
 
-My name is Jim Lee(Li Jing), and this is my personal blog.
+My name is Jim Lee(Jing Li), and this is my personal blog.
 
 Area of my interest is  Machine Learning and Deep Learning (mostly, somehow applied to fundamental sciences, though not limited by those).
 
