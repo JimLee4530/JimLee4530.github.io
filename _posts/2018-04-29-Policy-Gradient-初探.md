@@ -1,3 +1,11 @@
+---
+layout: post
+excerpt: Policy Gradient 是 RL 算法中一个基础的模型。本文结合gym的Pong-v0游戏，对Policy Gradient做简单说明，并提供基于Pytorch的代码作为示例。
+permalink: /Policy Gradient 初探
+published: true
+images:
+  - url: http://karpathy.github.io/assets/rl/pong.gif
+---
 ## 简介
 Policy Gradient 是 RL 算法中一个基础的模型。我们将结合游戏例子进行说明，以Pong游戏为例，Pong游戏界面中有左右两个白条，分别代表游戏双方，他们打网球一样，当一方就不到球时，另一方得分，先获得21分的一方获胜。
 
