@@ -1,6 +1,7 @@
 ---
 layout: post
 excerpt: Policy Gradient 是 RL 算法中一个基础的模型。本文会结合gym中的雅达利游戏Pong-v0做简要的说明。
+
 permalink: /Policy Gradient 初探
 published: true
 images:
