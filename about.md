@@ -18,10 +18,8 @@ I am a master currently studying at [Media Intelligence Laboratory(MIL), HDU](ht
 
 ## Publications
 - **Multimodal Transformer with Multi-View Visual Representation for Image Captioning**
-
 Jun Yu, Jing Li, Zhou Yu, Qingming Huang[[arxiv](https://arxiv.org/abs/1905.07841)]
-
-IEEE Transactions on Circuits and Systems for Video Technology
+IEEE Transactions on Circuits and Systems for Video Technology (TCSVT)
 
 ## Contact me
 
