@@ -16,11 +16,6 @@ I am a master currently studying at [Media Intelligence Laboratory(MIL), HDU](ht
 - **Rank 1** in [MS COCO Image Captioning Challenge](https://competitions.codalab.org/competitions/3221#results).
 - [**AI Challenger**](https://challenger.ai/competition/caption/leaderboard) (Top 10% in Image Captioning (Chinese)) .2017.
 
-## Publications
-- **Multimodal Transformer with Multi-View Visual Representation for Image Captioning**
-Jun Yu, Jing Li, Zhou Yu, Qingming Huang[[arxiv](https://arxiv.org/abs/1905.07841)]
-IEEE Transactions on Circuits and Systems for Video Technology (TCSVT)
-
 ## Contact me
 
 [jeyeml33@gmail.com](jeyeml33@gmail.com)
